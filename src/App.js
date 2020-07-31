@@ -1,30 +1,24 @@
-import React from "react";
-import "./App.css";
+import React, { useEffect, useCallback } from "react";
 
 function App() {
-  // const [state, setState] = useState();
   const [text, setText] = React.useState();
-  const questions = [ 
-    {question: "2+2=?", answer: "4", type: "open-ended"},
-    {question: "3+3=?", answer: "6", type: "open-ended"},
-    {question: "22+15=?", answer: "37", type: "open-ended"},
-  ];
-  const randomQuestion =
-  questions[Math.floor(Math.random() * questions.length)];
+  const [question, setQuestion] = React.useState();
 
-  const [question, setQuestion] = React.useState(randomQuestion);
+  const getRandomQuestion = useCallback(() => {
+    const questions = [
+      { question: "2+2=?", answer: "4", type: "open-ended" },
+      { question: "3+3=?", answer: "6", type: "open-ended" },
+      { question: "22+15=?", answer: "37", type: "open-ended" }
+    ];
 
-  // function getRandomQuestion() {
-  //   var randomIndex = Math.floor(Math.random()*questions.length);
-  //   randomQuestion = questions[randomIndex]
-  // }
-  
-  // useEffect(() => {
+    return questions[Math.floor(Math.random() * questions.length)];
+  }, []);
 
-  //   return randomQuestion.getRandomQuestion().then((value) => setState(value));
+  useEffect(() => {
+    const question = getRandomQuestion();
+    setQuestion(question);
+  }, [getRandomQuestion]);
 
-  // }, [])
-  
   function answerCheck() {
     if (text === question.answer) {
       alert("Correct");
@@ -32,24 +26,28 @@ function App() {
       alert("Incorrect");
     }
 
-    setQuestion(questions[Math.floor(Math.random() * questions.length)]);
-    console.log('text is ', text)
-    setText("")
-    console.log('text is ', text)
-
+    //
+    setQuestion(getRandomQuestion());
+    // setQuestion(questions[Math.floor(Math.random() * questions.length)]);
+    setText("");
   }
-  
+
+  if (!question) {
+    return <div>Loading</div>;
+  }
+
+  console.log(text);
 
   return (
     <div>
-      <div>
-        {question.question}
-      </div>
+      <div>{question.question}</div>
       <input
-        onChange={(event) => {
+        onChange={event => {
           setText(event.target.value);
         }}
-      ></input>
+        //
+        value={text}
+      />
       <button
         onClick={() => {
           setText("");
@@ -60,7 +58,6 @@ function App() {
       <button
         onClick={() => {
           answerCheck();
-          setText("")
         }}
       >
         Submit
